@@ -5,10 +5,9 @@ services:
     ports:
       - 7000:7000
       - 9042:9042
-    volumes:
-      - cassandra_data:/bitnami
+
     environment:
-      - CASSANDRA_SEEDS=cassandra1,cassandra2,cassandra3,cassandra4
+      - CASSANDRA_SEEDS=cassandra1,cassandra2,cassandra3
       - CASSANDRA_CLUSTER_NAME=cassandra-cluster
       - CASSANDRA_PASSWORD_SEEDER=yes
       - CASSANDRA_PASSWORD=cassandra
@@ -21,10 +20,9 @@ services:
     ports:
       - 7001:7000
       - 9043:9042
-    volumes:
-      - cassandra2_data:/bitnami
+
     environment:
-      - CASSANDRA_SEEDS=cassandra1,cassandra2,cassandra3,cassandra4
+      - CASSANDRA_SEEDS=cassandra1,cassandra2,cassandra3
       - CASSANDRA_CLUSTER_NAME=cassandra-cluster
       - CASSANDRA_PASSWORD=cassandra
       # By default, Cassandra autodetects the available host memory and takes as much as it can.
@@ -36,37 +34,13 @@ services:
     ports:
       - 7002:7000
       - 9044:9042
-    volumes:
-      - cassandra3_data:/bitnami
+
     environment:
-      - CASSANDRA_SEEDS=cassandra1,cassandra2,cassandra3,cassandra4
+      - CASSANDRA_SEEDS=cassandra1,cassandra2,cassandra3
       - CASSANDRA_CLUSTER_NAME=cassandra-cluster
       - CASSANDRA_PASSWORD=cassandra
       # By default, Cassandra autodetects the available host memory and takes as much as it can.
       # Therefore, memory options are mandatory if multiple Cassandras are launched in the same node.
       - MAX_HEAP_SIZE=2G
       - HEAP_NEWSIZE=200M
-  cassandra4:
-    image: docker.io/bitnami/cassandra:4.0
-    ports:
-      - 7003:7000
-      - 9045:9042
-    volumes:
-      - cassandra3_data:/bitnami
-    environment:
-      - CASSANDRA_SEEDS=cassandra1,cassandra2,cassandra3,cassandra4
-      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
-      - CASSANDRA_PASSWORD=cassandra
-      # By default, Cassandra autodetects the available host memory and takes as much as it can.
-      # Therefore, memory options are mandatory if multiple Cassandras are launched in the same node.
-      - MAX_HEAP_SIZE=2G
-      - HEAP_NEWSIZE=200M
-volumes:
-  cassandra_data:
-    driver: local
-  cassandra2_data:
-    driver: local
-  cassandra3_data:
-    driver: local
-  cassandra4_data:
-    driver: local
+  

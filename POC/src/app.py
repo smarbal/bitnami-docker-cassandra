@@ -16,12 +16,12 @@ app.config['SESSION_TYPE'] = 'filesystem'
 
 auth_provider = PlainTextAuthProvider(username='cassandra', password='cassandra')
 cluster = Cluster(['0.0.0.0'],port=9042, auth_provider=auth_provider)
-session = cluster.connect('tutorialspoint',wait_for_all_pools=True)
+session = cluster.connect()
 try : 
     rows = session.execute("CREATE KEYSPACE tutorialspoint WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};")
 except Exception :
     pass 
-    
+
 session.execute('USE tutorialspoint')
 #####################################
 
