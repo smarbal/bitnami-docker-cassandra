@@ -5,6 +5,8 @@ from flask_cors import CORS
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 
+import re 
+
 app = Flask(__name__)
 CORS(app)
 app.secret_key = 'ThisIsaSecret'
@@ -16,7 +18,7 @@ auth_provider = PlainTextAuthProvider(username='cassandra', password='cassandra'
 cluster = Cluster(['0.0.0.0'],port=9042, auth_provider=auth_provider)
 session = cluster.connect('tutorialspoint',wait_for_all_pools=True)
 try : 
-    rows = session.execute("CREATE KEYSPACE tutorialspoint WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 2};")
+    rows = session.execute("CREATE KEYSPACE tutorialspoint WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};")
 except Exception :
     pass 
     
@@ -25,16 +27,34 @@ session.execute('USE tutorialspoint')
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    users = session.execute("SELECT * FROM tutorialspoint.users;")
+    user_books = session.execute("SELECT * FROM tutorialspoint.users_books;")
+    books = session.execute("SELECT * FROM tutorialspoint.books;")
+    regex = r"\b(?<!\.)(?!0+(?:\.0+)?%)(?:\d|[1-9]\d|100)(?:(?<!101)\.\d+)?%"
+    status = os.popen("docker exec bitnami-docker-cassandra-cassandra1-1 nodetool status tutorialspoint").read()
+    matches = re.finditer(regex,status , re.MULTILINE)
+    result =[]
+    for match in matches : 
+        result.append(match.group())
+    #status = re.match("\b(?<!\.)(?!0+(?:\.0+)?%)(?:\d|[1-9]\d|100)(?:(?<!100)\.\d+)?%", status)
+    return render_template('index.html', users= users, user_books = user_books, books = books, status = result)
 
-@app.route("/analyze", methods=["POST"])
+
+
+
+
+@app.route("/kill", methods=["GET"])
 def analyze(): 
     
-    # check if the post request has the file part
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(url_for('index'))
-    file = request.files['file']
+    node = request.args.get('node')
+    #os.popen(f'docker kill bitnami-docker-cassandra-cassandra{node}-1')
+    os.popen(f'docker exec bitnami-docker-cassandra-cassandra1-1 nodetool assassinate 172.22.0.{int(node) + 1}')
+    
+    return 'Ok', 200
+
+
+
+
 
 def init_db(): 
     try : 
