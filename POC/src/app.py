@@ -47,9 +47,9 @@ def index():
 def analyze(): 
     
     node = request.args.get('node')
+    os.popen(f'docker exec bitnami-docker-cassandra-cassandra1-1 nodetool assassinate 172.28.0.{int(node) + 1}')
     #os.popen(f'docker kill bitnami-docker-cassandra-cassandra{node}-1')
-    os.popen(f'docker exec bitnami-docker-cassandra-cassandra1-1 nodetool assassinate 172.22.0.{int(node) + 1}')
-    
+
     return 'Ok', 200
 
 
