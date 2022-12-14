@@ -69,8 +69,6 @@ def analyze():
 
 def init_db(): 
     try : 
-        
-
         session.execute("CREATE TABLE tutorialspoint.users ( id int PRIMARY KEY,firstname text,lastname text );")
         session.execute("CREATE TABLE tutorialspoint.books ( id int PRIMARY KEY, title text, author text );")
         session.execute("CREATE TABLE tutorialspoint.users_books ( user_id int, book_id int, PRIMARY KEY (user_id, book_id));")
