@@ -6,6 +6,7 @@ from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 
 from cassandra import ConsistencyLevel
+from cassandra.query import SimpleStatement
 import re 
 
 app = Flask(__name__)
@@ -68,25 +69,33 @@ def analyze():
 
 def init_db(): 
     try : 
+        
+
         session.execute("CREATE TABLE tutorialspoint.users ( id int PRIMARY KEY,firstname text,lastname text );")
         session.execute("CREATE TABLE tutorialspoint.books ( id int PRIMARY KEY, title text, author text );")
         session.execute("CREATE TABLE tutorialspoint.users_books ( user_id int, book_id int, PRIMARY KEY (user_id, book_id));")
     except : 
         pass
     #Insert values
-    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (1, 'John', 'Doe');", consistency_level=ConsistencyLevel.QUORUM)
-    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (2, 'Jason', 'Momoha')", consistency_level=ConsistencyLevel.QUORUM)
-    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (3, 'Johnny', 'Depp');", consistency_level=ConsistencyLevel.QUORUM)
+    query = SimpleStatement("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (%s, %s, %s);", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute(query, (1, 'John', 'Doe'))
+    session.execute(query, (2, 'Jason', 'Momoha'))
+    session.execute(query, (3, 'Johnny', 'Depp'))
 
-    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (1, 'Dune', 'Frank Herbert')", consistency_level=ConsistencyLevel.QUORUM)
-    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (2, 'Star Wars', 'Georges Lucas')", consistency_level=ConsistencyLevel.QUORUM)
-    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (3, 'Harry Potter', 'J.K Rowling')", consistency_level=ConsistencyLevel.QUORUM)
+    query = SimpleStatement("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (%s, %s, %s);", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute(query, (1, 'Dune', 'Frank Herbert'))
+    session.execute(query, (2, 'Star Wars', 'Georges Lucas'))
+    session.execute(query, (3, 'Harry Potter', 'J.K Rowling'))
+
     
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (1, 2)", consistency_level=ConsistencyLevel.QUORUM)
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (2, 2)", consistency_level=ConsistencyLevel.QUORUM)
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (3, 2)", consistency_level=ConsistencyLevel.QUORUM)
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (2, 1)", consistency_level=ConsistencyLevel.QUORUM)
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (3, 3)", consistency_level=ConsistencyLevel.QUORUM)
+    query = SimpleStatement("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (%s, %s);", consistency_level=ConsistencyLevel.QUORUM)
+
+    session.execute(query, (2, 2))
+    session.execute(query, (1, 3))
+    session.execute(query, (1, 2))
+    session.execute(query, (3, 1))
+    session.execute(query, (3, 2))
+    session.execute(query, (2, 1))
 
 init_db()
 
