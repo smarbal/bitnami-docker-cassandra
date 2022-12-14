@@ -5,6 +5,7 @@ from flask_cors import CORS
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 
+from cassandra import ConsistencyLevel
 import re 
 
 app = Flask(__name__)
@@ -73,19 +74,19 @@ def init_db():
     except : 
         pass
     #Insert values
-    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (1, 'John', 'Doe');")
-    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (2, 'Jason', 'Momoha')")
-    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (3, 'Johnny', 'Depp');")
+    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (1, 'John', 'Doe');", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (2, 'Jason', 'Momoha')", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute("INSERT INTO tutorialspoint.users (id, firstname, lastname) VALUES (3, 'Johnny', 'Depp');", consistency_level=ConsistencyLevel.QUORUM)
 
-    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (1, 'Dune', 'Frank Herbert')")
-    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (2, 'Star Wars', 'Georges Lucas')")
-    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (3, 'Harry Potter', 'J.K Rowling')")
+    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (1, 'Dune', 'Frank Herbert')", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (2, 'Star Wars', 'Georges Lucas')", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute("INSERT INTO tutorialspoint.books (id, title , author ) VALUES (3, 'Harry Potter', 'J.K Rowling')", consistency_level=ConsistencyLevel.QUORUM)
     
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (1, 2)")
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (2, 2)")
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (3, 2)")
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (2, 1)")
-    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (3, 3)")
+    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (1, 2)", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (2, 2)", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (3, 2)", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (2, 1)", consistency_level=ConsistencyLevel.QUORUM)
+    session.execute("INSERT INTO tutorialspoint.users_books (user_id, book_id) VALUES (3, 3)", consistency_level=ConsistencyLevel.QUORUM)
 
 init_db()
 
