@@ -19,6 +19,8 @@ cluster = Cluster(['0.0.0.0'],port=9042, auth_provider=auth_provider)
 session = cluster.connect()
 try : 
     rows = session.execute("CREATE KEYSPACE tutorialspoint WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};")
+    rows = session.execute("ALTER KEYSPACE system_auth WITH REPLICATION ={ 'class' : 'SimpleStrategy', 'replication_factor' : 3 };")
+    
 except Exception :
     pass 
 
@@ -47,7 +49,14 @@ def index():
 def analyze(): 
     
     node = request.args.get('node')
-    os.popen(f'docker exec bitnami-docker-cassandra-cassandra1-1 nodetool assassinate 172.28.0.{int(node) + 1}')
+    status = os.popen("docker exec bitnami-docker-cassandra-cassandra1-1 nodetool status tutorialspoint").read()
+    
+    regex = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
+    match = re.search(regex,status , re.MULTILINE).group()
+    ip1 = match.split('.')[0]
+    ip2 = match.split('.')[1]
+    ip3 = match.split('.')[2]
+    os.popen(f'docker exec bitnami-docker-cassandra-cassandra1-1 nodetool assassinate {ip1}.{ip2}.{ip3}.{int(node) + 1}')
     #os.popen(f'docker kill bitnami-docker-cassandra-cassandra{node}-1')
 
     return 'Ok', 200
